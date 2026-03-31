@@ -1,0 +1,40 @@
+# Install required packages
+!pip install streamlit pyngrok pandas
+
+# Create Streamlit app file
+%%writefile sales_app.py
+import streamlit as st
+import pandas as pd
+
+# Title and description
+st.title("Sales Summary Dashboard")
+st.subheader("Interactive app to filter and visualize sales data")
+
+# Hardcoded dataset
+df = pd.DataFrame({
+    "Product": ["Laptop", "Shirt", "Phone", "Shoes", "Tablet"],
+    "Category": ["Electronics", "Clothing", "Electronics", "Footwear", "Electronics"],
+    "Sales": [50000, 2000, 30000, 4000, 15000]
+})
+
+# Sidebar filter
+st.sidebar.header("Filter Options")
+selected_category = st.sidebar.selectbox("Select Category", df["Category"].unique())
+
+# Filter data
+filtered_df = df[df["Category"] == selected_category]
+
+# Display data
+st.write("Filtered Sales Data")
+st.dataframe(filtered_df)
+
+# Line chart
+st.write("Sales Chart")
+st.line_chart(filtered_df["Sales"])
+
+# Run Streamlit using ngrok
+from pyngrok import ngrok
+public_url = ngrok.connect(8501)
+print("Streamlit App URL:", public_url)
+
+!streamlit run sales_app.py &>/dev/null &
